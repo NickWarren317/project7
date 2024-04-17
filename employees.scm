@@ -102,27 +102,46 @@
     (display (/ (total lst) (length lst)))
 )
 (define (max lst)
-    (display "max")
+    (define (iter lst max-so-far value)
+    ; If the list is empty, return the minimum found so far
+    (if (null? lst)
+        max-so-far
+        ; Compare the current element with the current minimum
+        (let (
+            (line (parse-string (list-at lst 0))))
+            (if (string=? (list-at line 0) "hourly")            
+                (set! value (hourly-earnings (string->number (list-at line 3)) (string->number (list-at line 4))))
+                (if (string=? (list-at line 0) "salaried")
+                    (set! value (string->number (list-at line 3)))
+                    (if(string=? (list-at line 0) "commission")
+                        (set! value (commission-earnings (string->number(list-at line 3)) (string->number(list-at line 4)) (string->number(list-at line 5))))
+                    )))
+        ; Update the minimum if the current element is smaller
+        (iter (cdr lst) (if (> value max-so-far) value max-so-far) value))
+    )
+    )
+    (print (remove_eq lst (iter lst 0 99)))
 )
 (define (min lst)
-    (define (min-helper lst)
-        (let ((line (parse-string (list-at lst 0))))
-        (if (string=? (list-at line 0) "hourly")
-            (min-helper(remove_le lst (hourly-earnings (string->number (list-at line 3)) (string->number (list-at line 4)))))
-            (if (string=? (list-at line 0) "salaried")
-            (min-helper(remove_le (list-at line 3)))
-                (if(string=? (list-at line 0) "commission")
-                    (min-helper(remove_le lst  (commission-earnings (string->number(list-at line 3)) (string->number(list-at line 4)) (string->number(list-at line 5)))))
-        )))
-        (if (<= value mini)
-            (mini value)
-        )
-        (if (= (length lst) 1)
-            lst
-        )
+    (define (iter lst min-so-far value)
+    ; If the list is empty, return the minimum found so far
+    (if (null? lst)
+        min-so-far
+        ; Compare the current element with the current minimum
+        (let (
+            (line (parse-string (list-at lst 0))))
+            (if (string=? (list-at line 0) "hourly")            
+                (set! value (hourly-earnings (string->number (list-at line 3)) (string->number (list-at line 4))))
+                (if (string=? (list-at line 0) "salaried")
+                    (set! value (string->number (list-at line 3)))
+                    (if(string=? (list-at line 0) "commission")
+                        (set! value (commission-earnings (string->number(list-at line 3)) (string->number(list-at line 4)) (string->number(list-at line 5))))
+                    )))
+        ; Update the minimum if the current element is smaller
+        (iter (cdr lst) (if (< value min-so-far) value min-so-far) value))
       )
     )
-    (print (remove_eq lst (min-helper lst)))
+    (print (remove_eq lst (iter lst 999999 99)))
 )
 (define (total lst)
         (define (total-helper lst value)
